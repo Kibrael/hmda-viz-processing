@@ -49,6 +49,9 @@ _site
 # Virtual Environment#
 
 
+# development files #
+processing_log.txt
+
 
 
 

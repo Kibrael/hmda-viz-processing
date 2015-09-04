@@ -33,7 +33,7 @@ class report_construction(object):
 		report_type = self.report_types[self.report_number[0]]
 		#get list of respondent IDs for an MSA
 		self.id_compiler.get_ids(cur, MSA, self.year)
-		#self.id_compiler.name_id_map = {"0000451965": "WELLS FARGO BANK, NA"}
+		self.id_compiler.name_id_map = {"0000451965": "WELLS FARGO BANK, NA"}
 		for respondent_id in self.id_compiler.name_id_map:
 			#print 'working on {respondent}'.format(respondent=self.id_compiler.name_id_map[respondent_id])
 			id_condition = '''and respondentid = '{respondent_id}' ;'''.format(respondent_id=respondent_id)
@@ -58,17 +58,17 @@ class report_construction(object):
 			if count > 0:
 				print count, 'LAR rows in MSA "{MSA}", for "{bank}" report "{report}", in {year}'.format(MSA=MSA, report=self.original_report_number, year=self.year, bank= self.id_compiler.name_id_map[respondent_id])
 				#TODO: manipulate report name to call query and aggregation functions
-				print self.report_number, "test print"
+				#print self.report_number, "test print"
 				#maybe change this to an 'in list' function?
 				if self.report_number[2] == '4' or self.report_number[2] == '5' or self.report_number[2] == '7' or self.report_number[2] == '8' or self.report_number[2:4] == '11' \
 				or self.report_number[2:4] == '12' or (self.report_number[2:4] == 'A-' and self.report_number[4] != '4'):
 					self.report_number = self.report_number[:self.report_number.index('-')+1] + 'x' # removes the report sub-number and adds an x to reports that share a json template for the series
 
 				w_list = ['A1W', 'A2W', 'A3W']
-				print self.report_number[2:]
+
 				if self.report_number[2:] in w_list:
 					self.report_number = self.report_number[:len(self.report_number)-2]+'xW'
-					print self.report_number, 'test replace'
+					#print self.report_number, 'test replace'
 				columns = getattr(self.queries, ('table_' + self.report_number[2:].replace(' ','_').replace('-','_')+'_columns'))()
 
 					#get distinct list of respondent IDs in the MSA
@@ -84,7 +84,9 @@ class report_construction(object):
 					if num == 0:
 						build_X.set_header(self.parsed.inputs, MSA, report_type, table_number, respondent_id, self.id_compiler.name_id_map[respondent_id]) #sets header information for the JSON object
 						table_X = getattr(build_X, self.json_builder_return)() #returns a string from the JSON_constructor_return function and uses it to call the json building function from A_D_Library
-
+					#print self.parsed.inputs
+					#print table_X
+					print self.aggregation
 					getattr(self.agg, self.aggregation)(table_X, self.parsed.inputs)
 
 				if self.report_number[2:] == '3-2': #report 3-2 requires out of loop aggregation functions for means and medians
@@ -237,7 +239,7 @@ class report_construction(object):
 			return 'compile_report_A_4'
 		elif report_number[2] == 'B':
 			return 'compile_report_B'
-		elif report_number[2:6] == 'A1W' or report_number[2:6] == 'A2W' or report_number == 'A3W':
+		elif report_number[2:6] == 'A1W' or report_number[2:6] == 'A2W' or report_number[2:6] == 'A3W':
 			return 'compile_report_A1W'
 		elif report_number[2:6] == 'A4W':
 			return 'compile_report_A4W'
@@ -272,7 +274,7 @@ class report_construction(object):
 			return 'table_A_4_builder'
 		elif self.report_number[2] == 'B':
 			return 'table_B_builder'
-		elif self.report_number[2:6] == 'A1W' or self.report_number[2:6] == 'A2W' or self.report_number[2:5] == 'A3W':
+		elif self.report_number[2:6] == 'A1W' or self.report_number[2:6] == 'A2W' or self.report_number[2:6] == 'A3W':
 			return 'table_AxW_builder'
 		elif self.report_number[2:6] == 'A4W':
 			return 'table_A4W_builder'

@@ -562,7 +562,7 @@ class build_JSON(object):
 		loan_purposes = ['Home Purchase', 'Refinance', 'Home Improvement']
 		lien_statuses = ['firstliencount', 'juniorliencount', 'noliencount']
 		disp_list = self.dispositions_list + ['Preapprovals Denied', 'Preapprovals Approved But Not Accepted', 'Preapprovals Resulting in Originations', 'Loans Sold']
-		print disp_list
+		#print disp_list
 		self.container['dispositions'] = self.set_list(self.end_points, disp_list, 'disposition', False)
 		for i in range(0, len(self.container['dispositions'])):
 			self.container['dispositions'][i]['loantypes'] = self.set_list(self.end_points, loan_types, 'loantype', False)
