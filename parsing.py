@@ -547,5 +547,45 @@ class parse_inputs(object):
 		self.inputs['loan type'] = int(row['loantype']) -1 #adjust loan purpose down one to match index in JSON structure
 
 	def parse_A4W(self, row):
-		print "nothing here yet"
-		return None
+		#this code is from A-4
+		MSA_index = MSA_info() #contains functions for census tract characteristics
+		demo=demographics() #contains functions for borrower characteristics
+		a_race = [] #race lists will hold 5 integers with 0 replacing a blank entry
+		co_race = [] #race lists will hold 5 integers with 0 replacing a blank entry
+		#fill race lists from the demographics class
+		app_races = [row['applicantrace1'], row['applicantrace2'], row['applicantrace3'],row['applicantrace4'],row['applicantrace5']]
+		co_app_races = [row['coapplicantrace1'], row['coapplicantrace2'], row['coapplicantrace3'],row['coapplicantrace4'],row['coapplicantrace5']]
+		a_race = demo.make_race_list(app_races) #put applicant race codes in a list 0-5, 0 is blank field
+		co_race = demo.make_race_list(co_app_races) #put co-applicant race codes in a list 0-5, 0 is blank field
+		#add data elements to dictionary
+		self.inputs['a_race'] = a_race
+		self.inputs['co_race'] = co_race
+		self.inputs['a ethn'] = row['applicantethnicity'] #ethnicity of the applicant
+		self.inputs['co ethn'] = row['coapplicantethnicity'] #ethnicity of the co-applicant
+		self.inputs['income'] = row['applicantincome'] #relied upon income rounded to the nearest thousand
+		self.inputs['rate spread'] = row['ratespread'] # interest rate spread over APOR if spread is greater than 1.5%
+		self.inputs['loan value'] = float(row['loanamount']) #loan value rounded to the nearest thousand
+		self.inputs['year'] = row['asofdate'] #year or application or origination
+		self.inputs['state code'] = row['statecode'] #two digit state code
+		self.inputs['state name'] = row['statename'] #two character state abbreviation
+		self.inputs['app sex'] = row['applicantsex']
+		self.inputs['co app sex'] = row['coapplicantsex']
+		self.inputs['MSA median income'] = row['ffiec_median_family_income'] #median income for the tract/msa
+		self.inputs['minority percent'] = row['minoritypopulationpct'] #%of population that is minority
+		self.inputs['tract to MSA income'] = row['tract_to_msa_md_income'] #ratio of tract to msa/md income
+		self.inputs['sequence'] = row['sequencenumber'] #the sequence number of the loan, used for checking errors
+		self.inputs['preapproval'] = row['preapproval']
+		self.inputs['action taken'] = row['actiontype']
+		#self.inputs['lien status'] = row['lienstatus']
+		self.inputs['tract income index'] = MSA_index.tract_to_MSA_income(self.inputs) #sets the tract to MSA median income ratio to an index number for aggregation
+		self.inputs['income bracket'] = MSA_index.app_income_to_MSA(self.inputs) #sets the applicant income as an index by an applicant's income as a percent of MSA median
+		self.inputs['rate spread index'] = demo.rate_spread_index_11_x(self.inputs['rate spread']) #index of the rate spread for use in the JSON structure
+		self.inputs['minority percent index'] = MSA_index.minority_percent(self.inputs) #sets the minority population percent to an index for aggregation
+		self.inputs['app non white flag'] = demo.set_non_white(a_race) #flags the applicant as non-white if true, used in setting minority status and race
+		self.inputs['co non white flag'] = demo.set_non_white(co_race) #flags the co applicant as non-white if true, used in setting minority status and race
+		self.inputs['minority count'] = demo.minority_count(a_race) #determines if the number of minority races claimed by the applicant is 2 or greater
+		self.inputs['joint status'] = demo.set_joint(self.inputs) #requires non white status flags be set prior to running set_joint
+		self.inputs['race'] = demo.set_race(self.inputs, a_race) #requires joint status be set prior to running set_race
+		self.inputs['ethnicity'] = demo.set_ethnicity(self.inputs) #requires  ethnicity be parsed prior to running set_ethnicity
+		self.inputs['minority status'] = demo.set_minority_status(self.inputs) #requires non white flags be set prior to running set_minority_status
+		self.inputs['gender'] = demo.set_gender(self.inputs)

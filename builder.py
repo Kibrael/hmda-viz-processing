@@ -215,13 +215,24 @@ class build_JSON(object):
 			return 'Disposition of preapprovals for conventional home-purchase loans, first lien, 1- to 4-family dwellings (excludes manufactured homes), by borrower or census tract characteristics'
 		elif table_num == 'B':
 			return 'Loan pricing information for conventional loans by incidence and level'
+		elif table_num == 'A1W':
+			return 'Disposition of applications and loan sales by loan type, 1- to 4-family dwellings (Excludes manufactured homes)'
+		elif table_num == 'A2W':
+			return 'Disposition of applications and loan sales by loan type, manufactured homes'
+		elif table_num == 'A3W':
+			return 'Disposition of applications and loan sales by loan type, multifamily housing'
+		elif table_num == 'A4W':
+			return 'Disposition of preapprovals for conventional home-purchase loans, first lien, 1- to 4-family dwellings (excludes manufactured homes), by borrower or census tract characteristics'
+		else:
+			print "table header return failed"
+			return None
 
 	def set_header(self, inputs, MSA, table_type, table_num, respondent_id, institution_name): #sets the header information of the JSON object
 		now = foo.datetime.now()
 		d = now.day
 		m = now.month
 		y = now.year
-		msa = OrderedDict({})
+
 		if table_type == 'Disclosure':
 			self.container['respondent_id'] = respondent_id
 			self.container['institution_name'] = institution_name
@@ -230,11 +241,13 @@ class build_JSON(object):
 		self.container['desc'] = self.table_headers(table_num)
 		self.container['year'] = inputs['year']
 		self.container['report-date'] = "{:0>2d}".format(m)+'/'+"{:0>2d}".format(d)+'/'+"{:0>4d}".format(y)
-		self.msa['id'] = MSA
-		self.msa['name'] = self.msa_names[MSA]
-		self.msa['state'] = inputs['state name'] #this is the two digit abbreviation
-		self.msa['state_name'] = self.state_names[self.msa['state']]
-		self.container['msa'] = self.msa
+		if 'W' not in table_num:
+			msa = OrderedDict({})
+			self.msa['id'] = MSA
+			self.msa['name'] = self.msa_names[MSA]
+			self.msa['state'] = inputs['state name'] #this is the two digit abbreviation
+			self.msa['state_name'] = self.state_names[self.msa['state']]
+			self.container['msa'] = self.msa
 
 		return self.container
 

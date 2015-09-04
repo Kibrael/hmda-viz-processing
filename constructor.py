@@ -31,9 +31,13 @@ class report_construction(object):
 	def disclosure_report(self, MSA, cur):
 		table_number = self.report_number[2:]
 		report_type = self.report_types[self.report_number[0]]
+		if self.report_number[:len(self.report_number)] == 'W': #set report type to National for W series reports
+			print "W series"
+			report_type = 'National'
 		#get list of respondent IDs for an MSA
 		self.id_compiler.get_ids(cur, MSA, self.year)
 		self.id_compiler.name_id_map = {"0000451965": "WELLS FARGO BANK, NA"}
+		national_list = ['A1W', 'A2W', 'A3W', 'A4W']
 		for respondent_id in self.id_compiler.name_id_map:
 			#print 'working on {respondent}'.format(respondent=self.id_compiler.name_id_map[respondent_id])
 			id_condition = '''and respondentid = '{respondent_id}' ;'''.format(respondent_id=respondent_id)
@@ -48,10 +52,19 @@ class report_construction(object):
 				self.parsed.inputs['small county flag'] = self.agg.get_small_county_flag(cur, MSA) #checks for small county flag for report 7
 
 			conditions = getattr(self.queries, ('table_' + self.original_report_number[2:].replace(' ','_').replace('-','_') +'_conditions'))()
-			conditions = conditions[:-1] + id_condition
+			if self.report_number[2:] in national_list:
+				conditions = conditions[:-1] + id_condition
+				#print conditions
+
+			else:
+				conditions = conditions[:-1] + id_condition
 
 			#print conditions
-			SQL = (self.queries.SQL_Count + conditions).format(year=self.year, MSA=MSA)
+			if self.report_number[2:] in national_list:
+				SQL = (self.queries.SQL_Count[:-25]+ conditions[4:]).format(year=self.year) # adjust count query to retrieve all MSAs for W series reporst
+				#print SQL
+			else:
+				SQL = (self.queries.SQL_Count + conditions).format(year=self.year, MSA=MSA) #count query for non-W series reports
 			cur.execute(SQL, location)
 			count = int(cur.fetchone()[0])
 
@@ -64,15 +77,18 @@ class report_construction(object):
 				or self.report_number[2:4] == '12' or (self.report_number[2:4] == 'A-' and self.report_number[4] != '4'):
 					self.report_number = self.report_number[:self.report_number.index('-')+1] + 'x' # removes the report sub-number and adds an x to reports that share a json template for the series
 
-				w_list = ['A1W', 'A2W', 'A3W']
 
-				if self.report_number[2:] in w_list:
-					self.report_number = self.report_number[:len(self.report_number)-2]+'xW'
+
+				if self.report_number[2:] in national_list and self.report_number[2:5] != 'A4W':
+					self.report_number = self.report_number[:len(self.report_number)-2]+'xW' #set report function returns for A1W, A2W, and A3W
 					#print self.report_number, 'test replace'
 				columns = getattr(self.queries, ('table_' + self.report_number[2:].replace(' ','_').replace('-','_')+'_columns'))()
 
 					#get distinct list of respondent IDs in the MSA
-				SQL = (self.queries.SQL_Query + conditions[:-1] + id_condition).format(columns=columns, year=self.year, MSA=MSA)
+				if self.report_number[2:] in national_list:
+					SQL = (self.queries.SQL_Query[:-25] + conditions[4:]).format(columns=columns, year=self.year) #set query to retrieve all MSAs for W series reports
+				else:
+					SQL = (self.queries.SQL_Query + conditions[:-1] + id_condition).format(columns=columns, year=self.year, MSA=MSA) #query for non-W series reports
 				cur.execute(SQL, location)
 
 				for num in range(0, count):
@@ -84,9 +100,7 @@ class report_construction(object):
 					if num == 0:
 						build_X.set_header(self.parsed.inputs, MSA, report_type, table_number, respondent_id, self.id_compiler.name_id_map[respondent_id]) #sets header information for the JSON object
 						table_X = getattr(build_X, self.json_builder_return)() #returns a string from the JSON_constructor_return function and uses it to call the json building function from A_D_Library
-					#print self.parsed.inputs
-					#print table_X
-					print self.aggregation
+
 					getattr(self.agg, self.aggregation)(table_X, self.parsed.inputs)
 
 				if self.report_number[2:] == '3-2': #report 3-2 requires out of loop aggregation functions for means and medians
