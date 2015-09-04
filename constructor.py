@@ -22,7 +22,7 @@ class report_construction(object):
 		self.queries = queries() #query text for all tables
 		self.agg = agg() #aggregation functions for all tables
 
-		self.json_builder = self.JSON_constructor_return()
+		self.json_builder_return = self.JSON_constructor_return()
 		self.parse_return_string = self.parse_return()
 		self.aggregation = self.aggregation_return(self.year, report)
 		self.id_compiler = id_compiler()
@@ -58,11 +58,17 @@ class report_construction(object):
 			if count > 0:
 				print count, 'LAR rows in MSA "{MSA}", for "{bank}" report "{report}", in {year}'.format(MSA=MSA, report=self.original_report_number, year=self.year, bank= self.id_compiler.name_id_map[respondent_id])
 				#TODO: manipulate report name to call query and aggregation functions
-
+				print self.report_number, "test print"
+				#maybe change this to an 'in list' function?
 				if self.report_number[2] == '4' or self.report_number[2] == '5' or self.report_number[2] == '7' or self.report_number[2] == '8' or self.report_number[2:4] == '11' \
-				or self.report_number[2:4] == '12' or (self.report_number[2] == 'A' and self.report_number[4] != '4'):
-					self.report_number = self.report_number[:self.report_number.index('-')+1] + 'x' # removes the 1 and adds an x to reports that share a json template for the series
+				or self.report_number[2:4] == '12' or (self.report_number[2:4] == 'A-' and self.report_number[4] != '4'):
+					self.report_number = self.report_number[:self.report_number.index('-')+1] + 'x' # removes the report sub-number and adds an x to reports that share a json template for the series
 
+				w_list = ['A1W', 'A2W', 'A3W']
+				print self.report_number[2:]
+				if self.report_number[2:] in w_list:
+					self.report_number = self.report_number[:len(self.report_number)-2]+'xW'
+					print self.report_number, 'test replace'
 				columns = getattr(self.queries, ('table_' + self.report_number[2:].replace(' ','_').replace('-','_')+'_columns'))()
 
 					#get distinct list of respondent IDs in the MSA
@@ -77,7 +83,7 @@ class report_construction(object):
 
 					if num == 0:
 						build_X.set_header(self.parsed.inputs, MSA, report_type, table_number, respondent_id, self.id_compiler.name_id_map[respondent_id]) #sets header information for the JSON object
-						table_X = getattr(build_X, self.json_builder)() #returns a string from the JSON_constructor_return function and uses it to call the json building function from A_D_Library
+						table_X = getattr(build_X, self.json_builder_return)() #returns a string from the JSON_constructor_return function and uses it to call the json building function from A_D_Library
 
 					getattr(self.agg, self.aggregation)(table_X, self.parsed.inputs)
 
@@ -161,7 +167,7 @@ class report_construction(object):
 
 					if num == 0:
 						build_X.set_header(self.parsed.inputs, MSA, report_type, table_number, '', '') #sets header information for the JSON object
-						table_X = getattr(build_X, self.json_builder)() #returns a string from the JSON_constructor_return function and uses it to call the json building function from A_D_Library
+						table_X = getattr(build_X, self.json_builder_return)() #returns a string from the JSON_constructor_return function and uses it to call the json building function from A_D_Library
 
 					getattr(self.agg, self.aggregation)(table_X, self.parsed.inputs)
 
@@ -231,6 +237,13 @@ class report_construction(object):
 			return 'compile_report_A_4'
 		elif report_number[2] == 'B':
 			return 'compile_report_B'
+		elif report_number[2:6] == 'A1W' or report_number[2:6] == 'A2W' or report_number == 'A3W':
+			return 'compile_report_A1W'
+		elif report_number[2:6] == 'A4W':
+			return 'compile_report_A4W'
+		else:
+			"print aggregation return failed"
+			return None
 
 	def JSON_constructor_return(self):
 		if self.report_number[2:5] == '3-1':
@@ -259,6 +272,10 @@ class report_construction(object):
 			return 'table_A_4_builder'
 		elif self.report_number[2] == 'B':
 			return 'table_B_builder'
+		elif self.report_number[2:6] == 'A1W' or self.report_number[2:6] == 'A2W' or self.report_number[2:5] == 'A3W':
+			return 'table_AxW_builder'
+		elif self.report_number[2:6] == 'A4W':
+			return 'table_A4W_builder'
 		else:
 			print 'json return failed'
 			return None
@@ -292,6 +309,10 @@ class report_construction(object):
 			return 'parse_A_4'
 		elif self.report_number[2] == 'B':
 			return 'parse_B_x'
+		elif self.report_number[2:5] == 'A1W' or self.report_number[2:5] == 'A2W' or self.report_number[2:5] == 'A3W':
+			return 'parse_AxW'
+		elif self.report_number[2:5] == 'A4W':
+			return 'parse_A4W'
 		else:
 			print 'parse return fail'
 			return None

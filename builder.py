@@ -556,6 +556,27 @@ class build_JSON(object):
 				self.container['dispositions'][i]['loantypes'][j]['purposes'][2]['noliencount'] = 0
 		return self.container
 
+	def table_AxW_builder(self):
+		#sample code from A_x builder
+		loan_types = ['Conventional', 'FHA', 'VA', 'FSA/RHS']
+		loan_purposes = ['Home Purchase', 'Refinance', 'Home Improvement']
+		lien_statuses = ['firstliencount', 'juniorliencount', 'noliencount']
+		disp_list = self.dispositions_list + ['Preapprovals Denied', 'Preapprovals Approved But Not Accepted', 'Preapprovals Resulting in Originations', 'Loans Sold']
+		print disp_list
+		self.container['dispositions'] = self.set_list(self.end_points, disp_list, 'disposition', False)
+		for i in range(0, len(self.container['dispositions'])):
+			self.container['dispositions'][i]['loantypes'] = self.set_list(self.end_points, loan_types, 'loantype', False)
+			for j in range(0, len(self.container['dispositions'][i]['loantypes'])):
+				self.container['dispositions'][i]['loantypes'][j]['purposes'] = self.set_list(lien_statuses[:-1], loan_purposes, 'purpose', True)
+				self.container['dispositions'][i]['loantypes'][j]['purposes'][2]['noliencount'] = 0
+		return self.container
+
+	def table_A4W_builder(self):
+		#sample code from A4 builder
+		preapproval_names = ['Preapprovals reasulting in originations', 'Preapprovals approved but not accepted', 'Preapprovals denied']
+		self.table_11_12_helper('preapprovalstatuses', 'preapprovalstatus', preapproval_names)
+		return self.container
+
 	def table_B_builder(self):
 		pricing_categories = ['No pricing reported', 'Pricing reported', 'Mean (points above average prime offer rate: only includes loans with APR above the threshold)', 'Median (points above the average prime offer rate: only includes loans with APR above the threshold)']
 		hoepa_statuses = ['HOEPA loan', 'Not a HOEPA loan']

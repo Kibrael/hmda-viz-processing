@@ -531,3 +531,21 @@ class parse_inputs(object):
 		self.inputs['hoepa flag'] = int(row['hoepastatus']) #if the loan is subject to Home Ownership Equity Protection Act
 		self.inputs['property type'] = int(row['propertytype'])
 		self.inputs['rate spread index'] = demo.rate_spread_index_11_x(row['ratespread']) #index of the rate spread for use in the JSON structure
+
+	def parse_AxW(self, row):
+		print 'AxW, set for A x'
+		self.inputs['loan value'] = float(row['loanamount']) #loan value rounded to the nearest thousand
+		self.inputs['year'] = row['asofdate'] #year or application or origination
+		self.inputs['state code'] = row['statecode'] #two digit state code
+		self.inputs['state name'] = row['statename'] #two character state abbreviation
+		self.inputs['sequence'] = row['sequencenumber'] #the sequence number of the loan, used for checking errors
+		self.inputs['lien status'] = row['lienstatus']
+		self.inputs['action taken index'] = self.action_taken_index(int(row['actiontype']), row['preapproval']) #disposition of the loan application
+		self.inputs['purchaser'] = int(row['purchasertype'])
+		self.inputs['preapproval'] = row['preapproval']
+		self.inputs['loan purpose'] = self.purpose_index(row['loanpurpose']) #adjust loan purpose down one to match index in JSON structure
+		self.inputs['loan type'] = int(row['loantype']) -1 #adjust loan purpose down one to match index in JSON structure
+
+	def parse_A4W(self, row):
+		print "nothing here yet"
+		return None

@@ -153,6 +153,18 @@ class queries(object):
 	def table_B_conditions(self):
 		return ''' and loantype = '1' and occupancy = '1' and actiontype = '1' ;'''
 
+	def table_A1W_conditions(self):
+		return ''' and propertytype = '1' ;'''
+
+	def table_A2W_conditions(self):
+		return ''' and propertytype = '2' ;'''
+
+	def table_A3W_conditions(self):
+		return ''' and propertytype = '3' ;'''
+
+	def table_A4W_conditions(self):
+		return ''' and loantype = '1' and loanpurpose = '1' and lienstatus = '1' and propertytype = '1' ;'''
+
 	def table_3_1_columns(self):
 		return '''censustractnumber, applicantrace1, applicantrace2, applicantrace3, applicantrace4, applicantrace5,
 			coapplicantrace1, coapplicantrace2, coapplicantrace3, coapplicantrace4, coapplicantrace5,
@@ -222,3 +234,15 @@ class queries(object):
 		return '''loanpurpose, lienstatus, hoepastatus, ratespread, propertytype, msaofproperty
 			statecode, statename, asofdate, sequencenumber
 			'''
+
+	def table_AxW_columns(self):
+		return '''loantype, lienstatus, loanpurpose, actiontype, loanamount, propertytype
+			msaofproperty, statename, statecode, asofdate, sequencenumber, preapproval, purchasertype
+			'''
+	def table_A4W_columns(self):
+		return '''applicantrace1, applicantrace2, applicantrace3, applicantrace4, applicantrace5,
+			coapplicantrace1, coapplicantrace2, coapplicantrace3, coapplicantrace4, coapplicantrace5,
+			applicantethnicity, coapplicantethnicity, applicantincome, applicantsex, coapplicantsex,
+			minoritypopulationpct, ffiec_median_family_income, statename, statecode, loanamount,
+			sequencenumber, asofdate, ratespread, tract_to_msa_md_income, lienstatus, preapproval,
+			actiontype '''

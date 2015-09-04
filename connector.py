@@ -14,13 +14,21 @@ class connect_DB(object): #connects to the SQL database
         #password = cred_list[3]
 
 
-        #parameter format
+        #parameter format for docker
         params = {
-        'dbname':'hmda',
+        'dbname':'hmdamaster',
         'user':'docker',
         'password':'docker',
         'host':'192.168.59.103',
         'port':'5432'
+        }
+        #parameter format for local use
+        params = {
+        'dbname':'hmdamaster',
+        'user':'roellk',
+        'password':'',
+        'host':'localhost',
+
         }
 
         #connect_string = "dbname=%s user=%s host=%s password =%s" %(dbname, user, host, password) #set a string for connection to SQL
