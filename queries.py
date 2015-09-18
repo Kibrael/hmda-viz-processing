@@ -163,7 +163,7 @@ class queries(object):
 		return ''' and propertytype = '3' ;'''
 
 	def table_A4W_conditions(self):
-		return ''' and loantype = '1' and loanpurpose = '1' and lienstatus = '1' and propertytype = '1' ;'''
+		return ''' and loantype = '1' and loanpurpose = '1' and lienstatus = '1' and propertytype = '1' and preapproval ='1' and actiontype in ('1','7','8');'''
 
 	def table_3_1_columns(self):
 		return '''censustractnumber, applicantrace1, applicantrace2, applicantrace3, applicantrace4, applicantrace5,
@@ -243,6 +243,6 @@ class queries(object):
 		return '''applicantrace1, applicantrace2, applicantrace3, applicantrace4, applicantrace5,
 			coapplicantrace1, coapplicantrace2, coapplicantrace3, coapplicantrace4, coapplicantrace5,
 			applicantethnicity, coapplicantethnicity, applicantincome, applicantsex, coapplicantsex,
-			minoritypopulationpct, ffiec_median_family_income, statename, statecode, loanamount,
+			minoritypopulationpct, ffiec_median_family_income, statename, statecode, msaofproperty, loanamount,
 			sequencenumber, asofdate, ratespread, tract_to_msa_md_income, lienstatus, preapproval,
 			actiontype '''

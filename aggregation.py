@@ -647,7 +647,9 @@ class aggregate(object): #aggregates LAR rows by appropriate characteristics to 
 					container['dispositions'][6]['loantypes'][inputs['loan type']]['purposes'][inputs['loan purpose']]['noliencount'] +=1
 
 	def compile_report_A4W(self, container, inputs):
+		#fill column 1 for preapprovals that were originated
 		if inputs['preapproval'] == '1' and inputs['action taken'] == '1':
+			print inputs['minority percent index'], 'min pct', inputs['loan value'], 'amount', inputs['sequence'], 'seq', inputs['msa'], inputs['tract income index'], float(inputs['tract to MSA income'])
 			self.fill_by_characteristics(container, inputs, 'borrowercharacteristics', 0, 'races', inputs['race'], 'preapprovalstatuses', 0)
 			self.fill_by_characteristics(container, inputs, 'borrowercharacteristics', 1, 'ethnicities', inputs['ethnicity'], 'preapprovalstatuses', 0)
 			if inputs['minority status'] < 2:
@@ -655,13 +657,30 @@ class aggregate(object): #aggregates LAR rows by appropriate characteristics to 
 			if inputs['income bracket'] < 6:
 				self.fill_by_characteristics(container, inputs, 'borrowercharacteristics', 3, 'incomes', inputs['income bracket'], 'preapprovalstatuses',0)
 			self.fill_by_characteristics(container, inputs, 'borrowercharacteristics', 4, 'genders', inputs['gender'], 'preapprovalstatuses', 0)
-			self.fill_by_characteristics(container, inputs, 'censuscharacteristics', 0, 'compositions', inputs['minority percent index'], 'preapprovalstatuses', 0)
-			if inputs['tract income index'] < 4:
-				self.fill_by_characteristics(container, inputs, 'censuscharacteristics', 1, 'incomes', inputs['tract income index'], 'preapprovalstatuses', 0)
+			if inputs['msa'] != 'NA   ':
+				self.fill_by_characteristics(container, inputs, 'censuscharacteristics', 0, 'compositions', inputs['minority percent index'], 'preapprovalstatuses', 0)
+				if inputs['tract income index'] < 4:
+					self.fill_by_characteristics(container, inputs, 'censuscharacteristics', 1, 'incomes', inputs['tract income index'], 'preapprovalstatuses', 0)
 
-		#needs aggregation logic for the second and third category columns
+		#fill column 2 for preapprovals that were approved but not accepted by the consumer
+		if inputs['preapproval'] == '1' and inputs['action taken'] == '8':
+			self.fill_by_characteristics(container, inputs, 'borrowercharacteristics', 0, 'races', inputs['race'], 'preapprovalstatuses', 1)
+			self.fill_by_characteristics(container, inputs, 'borrowercharacteristics', 1, 'ethnicities', inputs['ethnicity'], 'preapprovalstatuses', 1)
+			if inputs['minority status'] < 2:
+				self.fill_by_characteristics(container, inputs, 'borrowercharacteristics', 2, 'minoritystatuses', inputs['minority status'], 'preapprovalstatuses', 1)
+			self.fill_by_characteristics(container, inputs, 'borrowercharacteristics', 4, 'genders', inputs['gender'], 'preapprovalstatuses', 1)
 
-		#fill NAs for MSA level reports
+		#fill column 3 for preapprovals that were denied by the FI
+		if inputs['preapproval'] == '1' and inputs['action taken'] == '7':
+			self.fill_by_characteristics(container, inputs, 'borrowercharacteristics', 0, 'races', inputs['race'], 'preapprovalstatuses', 2)
+			self.fill_by_characteristics(container, inputs, 'borrowercharacteristics', 1, 'ethnicities', inputs['ethnicity'], 'preapprovalstatuses', 2)
+			if inputs['minority status'] < 2:
+				self.fill_by_characteristics(container, inputs, 'borrowercharacteristics', 2, 'minoritystatuses', inputs['minority status'], 'preapprovalstatuses', 2)
+			#if inputs['income bracket'] < 6:
+			#	self.fill_by_characteristics(container, inputs, 'borrowercharacteristics', 3, 'incomes', inputs['income bracket'], 'preapprovalstatuses',1)
+			self.fill_by_characteristics(container, inputs, 'borrowercharacteristics', 4, 'genders', inputs['gender'], 'preapprovalstatuses', 2)
+
+		#fill NAs for National level reports
 		for i in range(1, 3):
 			if inputs['income bracket'] < 6:
 				self.fill_by_characteristics_NA(container, inputs, 'borrowercharacteristics', 3, 'incomes', inputs['income bracket'], 'preapprovalstatuses', i)

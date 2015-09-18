@@ -22,6 +22,7 @@ class MSA_info(object): #contains functions for setting aggregate information fo
 				return 4
 			else:
 				print 'error setting percent MSA income bracket for index'
+				return None
 
 	def minority_percent(self, inputs): #set index codes for minority population percent
 		if inputs['minority percent'] == '      ':#if no information is available use an out of bounds index
@@ -30,7 +31,7 @@ class MSA_info(object): #contains functions for setting aggregate information fo
 			return 0
 		elif float(inputs['minority percent']) < 10.0: #less than 10%
 			return  0
-		elif float(inputs['minority percent']) <20.0: # 10-19%
+		elif float(inputs['minority percent']) < 20.0: # 10-19%
 			return 1
 		elif float(inputs['minority percent'])  < 50.0: # 20-49%
 			return  2
@@ -40,17 +41,19 @@ class MSA_info(object): #contains functions for setting aggregate information fo
 			return  4
 		else:
 			print "minority percent index not set"
+			return None
 
 	def tract_to_MSA_income(self, inputs): #set census MSA income level: low, moderate, middle, upper
 		if inputs['tract to MSA income'] == '      ' or inputs['tract to MSA income'] == 'NA    ': #if no information is available use an out of bounds index
 			return 4 #not stored in report 3-1
-		elif float(inputs['tract to MSA income']) < 50.0:
+		elif float(inputs['tract to MSA income']) < 51.00: #low
 			return 0
-		elif float(inputs['tract to MSA income']) <= 79.0:
+		elif float(inputs['tract to MSA income']) <80.00: #moderate
 			return 1
-		elif float(inputs['tract to MSA income']) <= 119.0:
+		elif float(inputs['tract to MSA income']) < 120.00: #middle
 			return 2
-		elif float(inputs['tract to MSA income']) >= 119.0:
+		elif float(inputs['tract to MSA income']) >= 119.00: #upper
 			return 3
 		else:
 			print "error setting tract to MSA income index"
+			return None

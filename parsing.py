@@ -534,6 +534,7 @@ class parse_inputs(object):
 
 	def parse_AxW(self, row):
 		#print 'AxW, set for A x'
+		print row
 		self.inputs['loan value'] = float(row['loanamount']) #loan value rounded to the nearest thousand
 		self.inputs['year'] = row['asofdate'] #year or application or origination
 		self.inputs['state code'] = row['statecode'] #two digit state code
@@ -568,6 +569,7 @@ class parse_inputs(object):
 		self.inputs['year'] = row['asofdate'] #year or application or origination
 		self.inputs['state code'] = row['statecode'] #two digit state code
 		self.inputs['state name'] = row['statename'] #two character state abbreviation
+		self.inputs['msa'] = row['msaofproperty']
 		self.inputs['app sex'] = row['applicantsex']
 		self.inputs['co app sex'] = row['coapplicantsex']
 		self.inputs['MSA median income'] = row['ffiec_median_family_income'] #median income for the tract/msa
