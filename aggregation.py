@@ -618,38 +618,58 @@ class aggregate(object): #aggregates LAR rows by appropriate characteristics to 
 			#first list 'property type', second list 'lien status', third list 'loan purpose'
 			self.table_B_rates[property_type][lien_status][inputs['loan purpose']].append(Decimal(inputs['rate spread']))
 
-
 	def compile_report_AxW(self, container, inputs):
 		#taken from A-1, needs changing
-		if inputs['action taken index'] < 8:
+		#if inputs['action taken index'] < 7:
 			if inputs['lien status'] == '1':
 				container['dispositions'][0]['loantypes'][inputs['loan type']]['purposes'][inputs['loan purpose']]['firstliencount'] +=1
 				container['dispositions'][inputs['action taken index']]['loantypes'][inputs['loan type']]['purposes'][inputs['loan purpose']]['firstliencount']+=1
 				if inputs['purchaser'] >0:
-					container['dispositions'][7]['loantypes'][inputs['loan type']]['purposes'][inputs['loan purpose']]['firstliencount'] +=1
-				if inputs['action taken index'] == 1 and inputs['preapproval'] == '1':
-					container['dispositions'][6]['loantypes'][inputs['loan type']]['purposes'][inputs['loan purpose']]['firstliencount'] +=1
+					container['dispositions'][9]['loantypes'][inputs['loan type']]['purposes'][inputs['loan purpose']]['firstliencount'] +=1
+				#if inputs['action taken index'] == 1 and inputs['preapproval'] == '1':
+				#	container['dispositions'][6]['loantypes'][inputs['loan type']]['purposes'][inputs['loan purpose']]['firstliencount'] +=1
 
 			elif inputs['lien status'] == '2':
 				container['dispositions'][0]['loantypes'][inputs['loan type']]['purposes'][inputs['loan purpose']]['juniorliencount'] +=1
 				container['dispositions'][inputs['action taken index']]['loantypes'][inputs['loan type']]['purposes'][inputs['loan purpose']]['juniorliencount']+=1
 				if inputs['purchaser'] >0:
-					container['dispositions'][7]['loantypes'][inputs['loan type']]['purposes'][inputs['loan purpose']]['juniorliencount'] +=1
-				if inputs['action taken index'] == 1 and inputs['preapproval'] == '1':
-					container['dispositions'][6]['loantypes'][inputs['loan type']]['purposes'][inputs['loan purpose']]['juniorliencount'] +=1
+					container['dispositions'][9]['loantypes'][inputs['loan type']]['purposes'][inputs['loan purpose']]['juniorliencount'] +=1
+				#if inputs['action taken index'] == 1 and inputs['preapproval'] == '1':
+				#	container['dispositions'][6]['loantypes'][inputs['loan type']]['purposes'][inputs['loan purpose']]['juniorliencount'] +=1
 
 			elif inputs['lien status'] == '3':
 				container['dispositions'][0]['loantypes'][inputs['loan type']]['purposes'][inputs['loan purpose']]['noliencount'] +=1
 				container['dispositions'][inputs['action taken index']]['loantypes'][inputs['loan type']]['purposes'][inputs['loan purpose']]['noliencount']+=1
 				if inputs['purchaser'] >0:
-					container['dispositions'][7]['loantypes'][inputs['loan type']]['purposes'][inputs['loan purpose']]['noliencount'] +=1
-				if inputs['action taken index'] == 1 and inputs['preapproval'] == '1':
+					container['dispositions'][9]['loantypes'][inputs['loan type']]['purposes'][inputs['loan purpose']]['noliencount'] +=1
+				#if inputs['action taken index'] == 1 and inputs['preapproval'] == '1':
+				#	container['dispositions'][6]['loantypes'][inputs['loan type']]['purposes'][inputs['loan purpose']]['noliencount'] +=1
+
+
+	def compile_report_A3W(self, container, inputs):
+			#fill first lien columns
+			if inputs['lien status'] == '1':
+				container['dispositions'][0]['loantypes'][inputs['loan type']]['purposes'][inputs['loan purpose']]['firstliencount'] +=1 #applications received
+				container['dispositions'][inputs['action taken index']]['loantypes'][inputs['loan type']]['purposes'][inputs['loan purpose']]['firstliencount']+=1
+				if inputs['purchaser'] >0:
+					container['dispositions'][6]['loantypes'][inputs['loan type']]['purposes'][inputs['loan purpose']]['firstliencount'] +=1
+
+			#fill junior lien columns
+			elif inputs['lien status'] == '2':
+				container['dispositions'][0]['loantypes'][inputs['loan type']]['purposes'][inputs['loan purpose']]['juniorliencount'] +=1 #applications received
+				container['dispositions'][inputs['action taken index']]['loantypes'][inputs['loan type']]['purposes'][inputs['loan purpose']]['juniorliencount']+=1
+				if inputs['purchaser'] >0:
+					container['dispositions'][6]['loantypes'][inputs['loan type']]['purposes'][inputs['loan purpose']]['juniorliencount'] +=1
+			#fill no lien column
+			elif inputs['lien status'] == '3':
+				container['dispositions'][0]['loantypes'][inputs['loan type']]['purposes'][inputs['loan purpose']]['noliencount'] +=1 #applications received
+				container['dispositions'][inputs['action taken index']]['loantypes'][inputs['loan type']]['purposes'][inputs['loan purpose']]['noliencount']+=1
+				if inputs['purchaser'] >0:
 					container['dispositions'][6]['loantypes'][inputs['loan type']]['purposes'][inputs['loan purpose']]['noliencount'] +=1
 
 	def compile_report_A4W(self, container, inputs):
 		#fill column 1 for preapprovals that were originated
 		if inputs['preapproval'] == '1' and inputs['action taken'] == '1':
-			print inputs['minority percent index'], 'min pct', inputs['loan value'], 'amount', inputs['sequence'], 'seq', inputs['msa'], inputs['tract income index'], float(inputs['tract to MSA income'])
 			self.fill_by_characteristics(container, inputs, 'borrowercharacteristics', 0, 'races', inputs['race'], 'preapprovalstatuses', 0)
 			self.fill_by_characteristics(container, inputs, 'borrowercharacteristics', 1, 'ethnicities', inputs['ethnicity'], 'preapprovalstatuses', 0)
 			if inputs['minority status'] < 2:
@@ -676,8 +696,6 @@ class aggregate(object): #aggregates LAR rows by appropriate characteristics to 
 			self.fill_by_characteristics(container, inputs, 'borrowercharacteristics', 1, 'ethnicities', inputs['ethnicity'], 'preapprovalstatuses', 2)
 			if inputs['minority status'] < 2:
 				self.fill_by_characteristics(container, inputs, 'borrowercharacteristics', 2, 'minoritystatuses', inputs['minority status'], 'preapprovalstatuses', 2)
-			#if inputs['income bracket'] < 6:
-			#	self.fill_by_characteristics(container, inputs, 'borrowercharacteristics', 3, 'incomes', inputs['income bracket'], 'preapprovalstatuses',1)
 			self.fill_by_characteristics(container, inputs, 'borrowercharacteristics', 4, 'genders', inputs['gender'], 'preapprovalstatuses', 2)
 
 		#fill NAs for National level reports

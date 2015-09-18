@@ -33,8 +33,8 @@ AL_MSAs = ['33340']
 #selector.reports_to_run = ['A 11-1', 'A 11-2', 'A 11-3', 'A 11-4', 'A 11-5', 'A 11-6', 'A 11-7', 'A 11-8', 'A 11-9', 'A 11-10']
 #selector.reports_to_run = ['D 12-1', 'D 12-2']
 #selector.reports_to_run = ['D A-1', 'D A-2', 'D A-3', 'D A-4']
-#selector.reports_to_run = ['D A1W', 'D A2W', 'D A3W', 'D A4W']
-selector.reports_to_run = ['D A3W']
+selector.reports_to_run = ['D A1W']
+#selector.reports_to_run = ['D A3W']
 #selector.reports_to_run = ['A 11-1', 'A 11-2', 'D 11-1', 'D 11-2']
 #complete report list
 #selector.reports_to_run = ['A 3-1', 'A 3-2', 'A 4-1', 'A 4-2', 'A 4-3', 'A 4-4', 'A 4-5', 'A 4-6', 'A 4-7', 'A 5-1', 'A 5-2', 'A 5-3', 'A 5-4', 'A 5-5', 'A 5-7', 'A 7-1', 'A 7-2', 'A 7-3', 'A 7-4', 'A 7-5', 'A 7-6', 'A 7-7', 'A 8-1', 'A 8-2', 'A 8-3', 'A 8-4', 'A 8-5', 'A 8-6', 'A 8-7', 'A 9', 'A 11-1', 'A 11-2', 'A 11-3', 'A 11-4', 'A 11-5', 'A 11-6', 'A 11-7', 'A 11-8', 'A 11-9', 'A 11-10', 'A 12-1', 'A 12-2', 'A A-1', 'A A-2', 'A A-3', 'A A-4', 'A B'] #this needs to be changed to read from the input file
@@ -60,7 +60,7 @@ for report in selector.reports_to_run: #loop over a list of report names
 	for MSA in selector.report_list[report]: #loop through MSAs flagged for report generation
 		if report[0] == 'A':
 			aggregate_report = report_construction(report, selector) #instantiate class and set function strings
-			aggregate_report.aggregate_report(MSA, cur) #variabalize function inputs!!!!
+			aggregate_report.aggregate_report(MSA, cur) #variabalize function inputs?
 		elif report[0] == 'D':
 			disclosure_report = report_construction(report, selector)
 			disc_report_start = time.clock()

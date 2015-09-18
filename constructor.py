@@ -36,8 +36,8 @@ class report_construction(object):
 			report_type = 'National'
 		#get list of respondent IDs for an MSA
 		self.id_compiler.get_ids(cur, MSA, self.year)
-		self.id_compiler.name_id_map = {"0000451965": "WELLS FARGO BANK, NA"}
-		national_list = ['A1W', 'A2W', 'A3W', 'A4W']
+		self.id_compiler.name_id_map = {"0000451965": "WELLS FARGO BANK, NA"} #fix respondent id and bank for testing
+		national_list = ['A1W', 'A2W', 'A3W', 'A4W', 'AxW'] #define list of national level reports to circumvent MSA filtering
 		for respondent_id in self.id_compiler.name_id_map:
 			#print 'working on {respondent}'.format(respondent=self.id_compiler.name_id_map[respondent_id])
 			id_condition = '''and respondentid = '{respondent_id}' ;'''.format(respondent_id=respondent_id)
@@ -57,7 +57,7 @@ class report_construction(object):
 				#print conditions
 
 			else:
-				conditions = conditions[:-1] + id_condition
+				conditions = conditions[:-1] + id_condition #is this necessary? test and remove if not
 
 			#print conditions
 			if self.report_number[2:] in national_list:
@@ -65,6 +65,7 @@ class report_construction(object):
 				#print SQL
 			else:
 				SQL = (self.queries.SQL_Count + conditions).format(year=self.year, MSA=MSA) #count query for non-W series reports
+
 			cur.execute(SQL, location)
 			count = int(cur.fetchone()[0])
 
@@ -85,10 +86,13 @@ class report_construction(object):
 				columns = getattr(self.queries, ('table_' + self.report_number[2:].replace(' ','_').replace('-','_')+'_columns'))()
 
 					#get distinct list of respondent IDs in the MSA
+
 				if self.report_number[2:] in national_list:
+
 					SQL = (self.queries.SQL_Query[:-25] + conditions[4:]).format(columns=columns, year=self.year) #set query to retrieve all MSAs for W series reports
 				else:
 					SQL = (self.queries.SQL_Query + conditions[:-1] + id_condition).format(columns=columns, year=self.year, MSA=MSA) #query for non-W series reports
+
 				cur.execute(SQL, location)
 
 				for num in range(0, count):
@@ -253,8 +257,10 @@ class report_construction(object):
 			return 'compile_report_A_4'
 		elif report_number[2] == 'B':
 			return 'compile_report_B'
-		elif report_number[2:6] == 'A1W' or report_number[2:6] == 'A2W' or report_number[2:6] == 'A3W':
+		elif report_number[2:6] == 'A1W' or report_number[2:6] == 'A2W':
 			return 'compile_report_AxW'
+		elif report_number[2:6] == 'A3W':
+			return 'compile_report_A3W'
 		elif report_number[2:6] == 'A4W':
 			return 'compile_report_A4W'
 		else:
@@ -288,8 +294,10 @@ class report_construction(object):
 			return 'table_A_4_builder'
 		elif self.report_number[2] == 'B':
 			return 'table_B_builder'
-		elif self.report_number[2:6] == 'A1W' or self.report_number[2:6] == 'A2W' or self.report_number[2:6] == 'A3W':
+		elif self.report_number[2:6] == 'A1W' or self.report_number[2:6] == 'A2W':
 			return 'table_AxW_builder'
+		elif self.report_number[2:6] == 'A3W':
+			return 'table_A3W_builder'
 		elif self.report_number[2:6] == 'A4W':
 			return 'table_A4W_builder'
 		else:

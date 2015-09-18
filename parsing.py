@@ -533,8 +533,6 @@ class parse_inputs(object):
 		self.inputs['rate spread index'] = demo.rate_spread_index_11_x(row['ratespread']) #index of the rate spread for use in the JSON structure
 
 	def parse_AxW(self, row):
-		#print 'AxW, set for A x'
-		print row
 		self.inputs['loan value'] = float(row['loanamount']) #loan value rounded to the nearest thousand
 		self.inputs['year'] = row['asofdate'] #year or application or origination
 		self.inputs['state code'] = row['statecode'] #two digit state code

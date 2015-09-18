@@ -6,7 +6,7 @@ class queries(object):
 		#no sequencenumber prior to 2012
 	def __init__(self):
 
-		self.SQL_Count = '''SELECT COUNT(msaofproperty) FROM hmdapub{year} WHERE msaofproperty = '{MSA}' '''
+		self.SQL_Count = '''SELECT COUNT(respondentid) FROM hmdapub{year} WHERE msaofproperty = '{MSA}' ''' #was count(msaofproperty)
 		self.SQL_Query = '''SELECT {columns} FROM hmdapub{year} WHERE msaofproperty = '{MSA}' '''
 
 	def table_3_1_conditions(self):
@@ -154,10 +154,10 @@ class queries(object):
 		return ''' and loantype = '1' and occupancy = '1' and actiontype = '1' ;'''
 
 	def table_A1W_conditions(self):
-		return ''' and propertytype = '1' ;'''
+		return ''' and propertytype = '1' and actiontype in ('0','1','2','3','4','5','6');'''
 
 	def table_A2W_conditions(self):
-		return ''' and propertytype = '2' ;'''
+		return ''' and propertytype = '2' actiontype in ('0','1','2','3','4','5','6');'''
 
 	def table_A3W_conditions(self):
 		return ''' and propertytype = '3' ;'''
