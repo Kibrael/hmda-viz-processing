@@ -205,13 +205,13 @@ class build_JSON(object):
 			return 'Disposition of applications for conventional manufactured home-purchas loans, first lien, owner-occupied dwelling, by borrower or census tract characteristics'
 		elif table_num == '12-2':
 			return 'Pricing information for conventional manufactured home-purchase loans, first lien, owner-occupied dwelling, by borrower or census tract characteristics'
-		elif table_num == 'A1':
+		elif table_num == 'A-1':
 			return 'Disposition of applications and loan sales by loan type, 1- to 4-family dwellings (Excludes manufactured homes)'
-		elif table_num == 'A2':
+		elif table_num == 'A-2':
 			return 'Disposition of applications and loan sales by loan type, manufactured homes'
-		elif table_num == 'A3':
+		elif table_num == 'A-3':
 			return 'Disposition of applications and loan sales by loan type, multifamily housing'
-		elif table_num == 'A4':
+		elif table_num == 'A-4':
 			return 'Disposition of preapprovals for conventional home-purchase loans, first lien, 1- to 4-family dwellings (excludes manufactured homes), by borrower or census tract characteristics'
 		elif table_num == 'B':
 			return 'Loan pricing information for conventional loans by incidence and level'
@@ -510,9 +510,10 @@ class build_JSON(object):
 		temp = OrderedDict({})
 		return_dict = OrderedDict({})
 		temp['characteristic'] = characteristic
-		temp[list_header] = self.set_list(self.end_points, item_list, item_name, False)
+		temp[list_header] = self.set_list(self.end_points, item_list, item_name, False) #this is not the final end point level, keep at false or else 'count' and 'value' are added at the wrong layer
 
 		for i in range(0, len(temp[list_header])):
+			#print temp[list_header]
 			temp_dict = OrderedDict({})
 			temp[list_header][i][layer_2_key] = self.set_list(self.end_points, layer_2_list, layer_2_name, True)
 		characteristic_list.append(temp)
@@ -575,7 +576,6 @@ class build_JSON(object):
 		loan_purposes = ['Home Purchase', 'Refinance', 'Home Improvement']
 		lien_statuses = ['firstliencount', 'juniorliencount', 'noliencount']
 		disp_list = self.dispositions_list + ['Preapprovals Denied', 'Preapprovals Approved But Not Accepted', 'Preapprovals Resulting in Originations', 'Loans Sold']
-		#print disp_list
 		self.container['dispositions'] = self.set_list(self.end_points, disp_list, 'disposition', False)
 		for i in range(0, len(self.container['dispositions'])):
 			self.container['dispositions'][i]['loantypes'] = self.set_list(self.end_points, loan_types, 'loantype', False)

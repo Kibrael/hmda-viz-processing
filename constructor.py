@@ -254,7 +254,7 @@ class report_construction(object):
 		elif report_number[2] == 'B':
 			return 'compile_report_B'
 		elif report_number[2:6] == 'A1W' or report_number[2:6] == 'A2W' or report_number[2:6] == 'A3W':
-			return 'compile_report_A1W'
+			return 'compile_report_AxW'
 		elif report_number[2:6] == 'A4W':
 			return 'compile_report_A4W'
 		else:
